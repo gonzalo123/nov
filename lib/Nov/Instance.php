@@ -29,13 +29,10 @@ class Instance
     private function getNewInstanceOfClass($className)
     {
         $this->rClass = new \ReflectionClass($className);
-
         $hasConstruct = $this->rClass->hasMethod('__construct');
-        if ($hasConstruct) {
-            $params = $this->getMethodParams($this->rClass->getMethod('__construct'));
-        } else {
-            $params = array();
-        }
+
+        $params = $hasConstruct ? $this->getMethodParams($this->rClass->getMethod('__construct')) : array();
+
         if ($this->rClassNeedsToBeInejectedWithContainer($this->rClass)) {
             $class = $this->getClassWithInjectedConatainer($hasConstruct, $params);
         } else {
