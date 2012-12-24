@@ -91,17 +91,21 @@ class Instance
 
     public function getRequestParametersForMethod($action)
     {
-        $params = array();
+        $params  = array();
         $rMethod = $this->rClass->getMethod($action);
         $request = $this->parser->getRequest();
 
         foreach ($rMethod->getParameters() as $param) {
             $paramenterName = $param->getName();
-            $requestParameterValue = $request->get($paramenterName);
-
-            if (!is_null($requestParameterValue)) {
-                $params[] = $requestParameterValue;
+            if (isset($param->getClass()->name)) {
+                $params[$paramenterName] = $this->getDependency($param->getClass()->name);
+            } else {
+                $requestParameterValue = $request->get($paramenterName);
+                if (!is_null($requestParameterValue)) {
+                    $params[$paramenterName] = $requestParameterValue;
+                }
             }
+
         }
 
         return $params;
@@ -126,16 +130,36 @@ class Instance
     {
         $parameterName = $param->getName();
         if (isset($param->getClass()->name)) {
-            switch ($param->getClass()->name) {
-                case 'Symfony\Component\DependencyInjection\Container':
-                    $params[$parameterName] = $this->container;
-                    break;
-                case 'Symfony\Component\HttpFoundation\Request':
-                    $params[$parameterName] = $this->container->get('request');
-                    break;
+            $dependency = $this->getDependency($param->getClass()->name);
+            if (!is_null($dependency)) {
+                $params[$parameterName] = $dependency;
             }
         }
 
         return $params;
+    }
+
+    private function getDependency($item)
+    {
+        $out = null;
+        switch ($item) {
+            case 'Symfony\Component\DependencyInjection\Container':
+                $out = $this->container;
+                break;
+            case 'Symfony\Component\HttpFoundation\Request':
+                $out = $this->container->get('request');
+                break;
+            case 'Nov\Controller\Redirect':
+                $out = $this->container->get('redirect');
+                break;
+            case 'Monolog\Logger';
+                $out = $this->container->get('logger');
+                break;
+            case 'Nov\View':
+                $out = $this->container->get('view');
+                break;
+        }
+
+        return $out;
     }
 }

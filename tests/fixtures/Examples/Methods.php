@@ -1,5 +1,6 @@
 <?php
 namespace Examples;
+use \Symfony\Component\HttpFoundation\Request;
 
 class Methods
 {
@@ -8,5 +9,10 @@ class Methods
     public function hi($name)
     {
         return "Hi {$name}";
+    }
+
+    public function ho(Request $request)
+    {
+        return "Ho " . $request->get('name');
     }
 }

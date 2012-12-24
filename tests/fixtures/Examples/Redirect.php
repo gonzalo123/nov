@@ -15,7 +15,7 @@ class Redirect
 
     public function hey()
     {
-        $redirect = $this->getFromContainer('redirect');
+        $redirect = $this->getRedirect();
         $redirect->setController('Redirect2');
         $redirect->setAction('go');
 
@@ -26,7 +26,6 @@ class Redirect
     {
         return "Ho";
     }
-
 
     public function double()
     {

@@ -9,10 +9,18 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class DependencyInjectionInMethodsTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSingleRedirect()
+    public function testSimpleRequestInjection()
     {
         $instance = new Instance($this->getParserMockFor('Examples', 'Methods', 'hi', '/?name=Gonzalo'));
         $this->assertEquals("Hi Gonzalo", $instance->invoke());
+    }
+
+    public function testDIInjection()
+    {
+        $url = '/?name=Gonzalo';
+        $instance = new Instance($this->getParserMockFor('Examples', 'Methods', 'ho', $url));
+        $instance->setContainer($this->getContainerForUrl($url));
+        $this->assertEquals("Ho Gonzalo", $instance->invoke());
     }
 
     /**
@@ -34,5 +42,16 @@ class DependencyInjectionInMethodsTest extends \PHPUnit_Framework_TestCase
         $parser->expects($this->any())->method('getRequest')->will($this->returnValue(Request::create($url)));
 
         return $parser;
+    }
+
+    public function getContainerForUrl($url)
+    {
+        $container = new ContainerBuilder();
+        $loader    = new YamlFileLoader($container, new FileLocator(__DIR__ . '/fixtures/config/'));
+        $loader->load('services.yml');
+        $container->set('request', Request::create($url));
+        $container->setParameter('root_dir', __DIR__ . '/fixtures');
+
+        return $container;
     }
 }

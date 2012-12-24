@@ -1,6 +1,10 @@
 <?php
 namespace Nov\Controller;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Nov\Controller\Redirect;
+use Monolog\Logger;
+
 trait Helper
 {
     protected $_container;
@@ -10,12 +14,13 @@ trait Helper
         return $this->_container->get($key);
     }
 
+    /** @return ContainerBuilder */
     protected function getContainer()
     {
         return $this->_container;
     }
 
-    /** @return Monolog\Logger */
+    /** @return Logger */
     protected function getLogger()
     {
         return $this->_container->get('logger');
@@ -29,9 +34,7 @@ trait Helper
         return $this->_container->get('view')->getTwig($class)->render($tpl, $arguments);
     }
 
-    /**
-     * @return use Symfony\Component\HttpFoundation\Request
-     */
+    /** @return Symfony\Component\HttpFoundation\Request */
     protected function getRequest()
     {
         return $this->_container->get('request');
@@ -40,5 +43,11 @@ trait Helper
     protected function getFromRequest($key, $default = null, $deep = false)
     {
         return $this->getRequest()->get($key, $default, $deep);
+    }
+
+    /** @return Redirect */
+    protected function getRedirect()
+    {
+        return $this->_container->get('redirect');
     }
 }
