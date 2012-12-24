@@ -9,6 +9,7 @@ class Instance
 {
     private $parser;
     private $container;
+    private $rClass;
 
     public function __construct(Parser $parser)
     {
@@ -27,26 +28,27 @@ class Instance
 
     private function getNewInstanceOfClass($className)
     {
-        $rClass       = new \ReflectionClass($className);
-        $hasConstruct = $rClass->hasMethod('__construct');
+        $this->rClass = new \ReflectionClass($className);
+
+        $hasConstruct = $this->rClass->hasMethod('__construct');
         if ($hasConstruct) {
-            $params = $this->getMethodParams($rClass->getMethod('__construct'));
+            $params = $this->getMethodParams($this->rClass->getMethod('__construct'));
         } else {
             $params = array();
         }
-        if ($this->rClassNeedsToBeInejectedWithContainer($rClass)) {
-            $class = $this->getClassWithInjectedConatainer($rClass, $hasConstruct, $params);
+        if ($this->rClassNeedsToBeInejectedWithContainer($this->rClass)) {
+            $class = $this->getClassWithInjectedConatainer($hasConstruct, $params);
         } else {
-            $class = $rClass->newInstanceArgs($params);
+            $class = $this->rClass->newInstanceArgs($params);
         }
         return $class;
     }
 
-    private function getClassWithInjectedConatainer(\ReflectionClass $rClass, $hasConstruct, $params)
+    private function getClassWithInjectedConatainer($hasConstruct, $params)
     {
-        $class = $rClass->newInstanceWithoutConstructor();
+        $class = $this->rClass->newInstanceWithoutConstructor();
 
-        $rProperty = $rClass->getProperty('_container');
+        $rProperty = $this->rClass->getProperty('_container');
         $rProperty->setAccessible(true);
         $rProperty->setValue($class, $this->container);
 
@@ -69,7 +71,8 @@ class Instance
 
     private function invokeAction($instance, $action)
     {
-        $out = call_user_func(array($instance, $action));
+        $params = $this->getRequestParametersForMethod($action);
+        $out    = call_user_func_array(array($instance, $action), $params);
 
         if ($out instanceof Redirect) {
 
@@ -84,6 +87,24 @@ class Instance
         }
 
         return $out;
+    }
+
+    public function getRequestParametersForMethod($action)
+    {
+        $params = array();
+        $rMethod = $this->rClass->getMethod($action);
+        $request = $this->parser->getRequest();
+
+        foreach ($rMethod->getParameters() as $param) {
+            $paramenterName = $param->getName();
+            $requestParameterValue = $request->get($paramenterName);
+
+            if (!is_null($requestParameterValue)) {
+                $params[] = $requestParameterValue;
+            }
+        }
+
+        return $params;
     }
 
     public function getRequest()
