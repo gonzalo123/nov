@@ -43,4 +43,17 @@ class Redirect
 
         return $redirect;
     }
+
+    public function redirectWithRequestParams()
+    {
+        $redirect = $this->getFromContainer('redirect');
+        $redirect->setAction('redirectWithRequestParams2');
+
+        return $redirect;
+    }
+
+    public function redirectWithRequestParams2()
+    {
+        return "Hi " . $this->getFromRequest('name');
+    }
 }
