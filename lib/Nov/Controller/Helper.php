@@ -1,7 +1,17 @@
 <?php
+
+/*
+ * This file is part of the Nov package.
+ *
+ * (c) Gonzalo Ayuso <gonzalo123@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nov\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Container;
 use Nov\Controller\Redirect;
 use Monolog\Logger;
 
@@ -14,7 +24,7 @@ trait Helper
         return $this->_container->get($key);
     }
 
-    /** @return ContainerBuilder */
+    /** @return Container */
     protected function getContainer()
     {
         return $this->_container;

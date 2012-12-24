@@ -1,0 +1,25 @@
+parameters:
+  database.db1.dsn: sqlite::memory:
+  database.db1.username: username
+  database.db1.password: password
+
+  database.db2.dsn: pgsql:host=127.0.0.1;port=5432;dbname=testdb
+  database.db2.username: username
+  database.db2.password: password
+
+services:
+  db1:
+    class: \Nov\Db
+    arguments: [@container]
+    calls:
+      - [setDsn, [%database.db1.dsn%]]
+      - [setUsername, [%database.db1.username%]]
+      - [setPassword, [%database.db1.password%]]
+
+  db2:
+    class: \Nov\Db
+    arguments: [@container]
+    calls:
+      - [setDsn, [%database.db2.dsn%]]
+      - [setUsername, [%database.db2.username%]]
+      - [setPassword, [%database.db2.password%]]
