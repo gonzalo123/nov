@@ -1,0 +1,53 @@
+imports:
+- { resource: config.yml }
+
+parameters:
+  security:
+    login:
+      namespace: Examples
+      controller: Login
+      login_action: login
+      check_action: login
+    pattern: /examples/app/
+
+services:
+  parser:
+    class: Nov\Parser
+    arguments: [@request]
+    calls:
+      - [setRootNamespace, [%root_namespace%]]
+      - [setDefaultController, [%default_controller%]]
+      - [setDefaultAction, [%default_action%]]
+      - [parse, []]
+  redirect:
+    class: Nov\Controller\Redirect
+
+  instance:
+    class: Nov\Instance
+    arguments: [@parser]
+    calls:
+      - [setContainer, [@container]]
+
+  responser:
+    class: Nov\Responser
+    arguments: [@instance]
+
+  request:
+    factory_class: Symfony\Component\HttpFoundation\Request
+    factory_method: createFromGlobals
+
+  view:
+    class: Nov\View
+    arguments: [%templating_cache_path%, %cache_auto_reload%]
+    calls:
+      - [registerNamespace, [%root_namespace%, %root_dir%]]
+
+  streamHandler:
+    class: Monolog\Handler\StreamHandler
+    arguments: [/home/gonzalo/petProjects/fw2/app/log, %log_level%]
+
+  logger:
+    class: Monolog\Logger
+    arguments: [%logger_name%]
+    calls:
+      - [pushHandler, [@streamHandler]]

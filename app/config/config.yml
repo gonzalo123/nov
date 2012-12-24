@@ -1,0 +1,10 @@
+parameters:
+  log_dir: %root_dir%/logs/log
+  default_controller: DefaultController
+  default_action: html
+  root_namespace: Foo
+  templating_cache_path: %root_dir%/cache/twig
+  cache_auto_reload: true
+  logger_name: loger
+  log_level: 300
+  log_path: %root_dir%/log

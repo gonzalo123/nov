@@ -1,0 +1,41 @@
+imports:
+- { resource: config.yml }
+
+services:
+  parser:
+    class: Nov\Parser
+    arguments: [@request]
+    calls:
+      - [setRootNamespace, [%root_namespace%]]
+      - [setDefaultController, [%default_controller%]]
+      - [setDefaultAction, [%default_action%]]
+      - [parse, []]
+
+  instance:
+    class: Nov\Instance
+    arguments: [@parser]
+    calls:
+      - [setContainer, [@container]]
+
+  redirect:
+    class: Nov\Controller\Redirect
+
+  responser:
+    class: Nov\Responser
+    arguments: [@instance]
+
+  view:
+    class: Nov\View
+    arguments: [%templating_cache_path%, %cache_auto_reload%]
+    calls:
+      - [registerNamespace, [%root_namespace%, %root_dir%]]
+
+  streamHandler:
+    class: Monolog\Handler\StreamHandler
+    arguments: [/home/gonzalo/petProjects/fw2/app/log, 300]
+
+  logger:
+    class: Monolog\Logger
+    arguments: [%logger_name%]
+    calls:
+      - [pushHandler, [@streamHandler]]
