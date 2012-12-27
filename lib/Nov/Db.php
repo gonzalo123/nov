@@ -11,9 +11,7 @@
 
 namespace Nov;
 
-use Nov\Db\Iface;
-
-class Db implements Iface
+class Db
 {
     private $dsn;
     private $username;
