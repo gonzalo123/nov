@@ -23,6 +23,7 @@
         "symfony/yaml": "dev-master",
         "symfony/config": "dev-master",
         "twig/twig":"dev-master",
-        "monolog/monolog":"dev-master"
+        "monolog/monolog":"dev-master",
+        "doctrine/dbal": "2.3.1"
     }
 }

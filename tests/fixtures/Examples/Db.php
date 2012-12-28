@@ -7,20 +7,23 @@ class Db
 {
     use \Nov\Controller\Helper;
 
-    private $pdo;
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $conn;
 
     public function __construct()
     {
-        $this->pdo = $this->getFromContainer('db1')->getPDO();
+        $this->conn = $this->getFromContainer('db1');
     }
 
     public function exec($string)
     {
-        return $this->pdo->exec($string);
+        return $this->conn->exec($string);
     }
 
     public function select($string)
     {
-        return $this->pdo->query($string)->fetchAll();
+        return $this->conn->query($string)->fetchAll();
     }
 }

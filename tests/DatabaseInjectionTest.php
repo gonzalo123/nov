@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class DatabaseInjectionTest extends \PHPUnit_Framework_TestCase
 {
+
     public function testDbInjection()
     {
         $url = '/?name=Gonzalo';
@@ -45,7 +46,7 @@ class DatabaseInjectionTest extends \PHPUnit_Framework_TestCase
     public function getContainerForUrl($url)
     {
         $container = new ContainerBuilder();
-        $loader    = new YamlFileLoader($container, new FileLocator(__DIR__ . '/fixtures/config/'));
+        $loader    = new YamlFileLoader($container, new FileLocator(__DIR__ . '/fixtures/config'));
         $loader->load('services.yml');
         $container->set('request', Request::create($url));
         $container->setParameter('root_dir', __DIR__ . '/fixtures');
