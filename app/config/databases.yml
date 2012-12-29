@@ -18,11 +18,13 @@ services:
     class: %doctrine.dbal.configuration%
 
   db1:
+    class: %doctrine.dbal.drivermanager%
     factory_class: %doctrine.dbal.drivermanager%
     factory_method: getConnection
-    arguments: [%database.db1%]
+    arguments: [%database.db1%, @dbal_configuartion]
 
   db2:
-      factory_class: %doctrine.dbal.drivermanager%
-      factory_method: getConnection
-      arguments: [%database.db2%]
+    class: %doctrine.dbal.drivermanager%
+    factory_class: %doctrine.dbal.drivermanager%
+    factory_method: getConnection
+    arguments: [%database.db2%, @dbal_configuartion]
